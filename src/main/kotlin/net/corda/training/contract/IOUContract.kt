@@ -88,8 +88,10 @@ class IOUContract : Contract {
                     require(output.paid == iou.paid + sumCash) { "The paid property was not updated to the correct value." }
                 }
 
-                "Both lender and borrower together only must sign IOU settle transaction." by
+                requireThat {
+                    "Both lender and borrower together only must sign IOU settle transaction." by
                         (command.signers.toSet() == iou.participants.toSet())
+                }
             }
             else -> throw IllegalArgumentException("Unrecognised command.")
         }
