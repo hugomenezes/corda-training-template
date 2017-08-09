@@ -51,26 +51,26 @@ class IOUIssueTests {
      * - We can check for the existence of any command that implements [IOUContract.Commands] by using the
      *   [requireSingleCommand] function which takes a type parameter.
      */
-//    @Test
-//    fun mustIncludeIssueCommand() {
-//        val iou = IOUState(1.POUNDS, ALICE, BOB)
-//        ledger {
-//            transaction {
-//                output { iou }
-//                this.fails()
-//            }
-//            transaction {
-//                output { iou }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { DummyCommand() } // Wrong type.
-//                this.fails()
-//            }
-//            transaction {
-//                output { iou }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() } // Correct type.
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun mustIncludeIssueCommand() {
+        val iou = IOUState(1.POUNDS, ALICE, BOB)
+        ledger {
+            transaction {
+                output { iou }
+                this.fails()
+            }
+            transaction {
+                output { iou }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { DummyCommand() } // Wrong type.
+                this.fails()
+            }
+            transaction {
+                output { iou }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() } // Correct type.
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 2.
@@ -90,23 +90,23 @@ class IOUIssueTests {
      * You can access the list of inputs via the [TransactionForContract] object which is passed into
      * [IOUContract.verify].
      */
-//    @Test
-//    fun issueTransactionMustHaveNoInputs() {
-//        val iou = IOUState(1.POUNDS, ALICE, BOB)
-//        ledger {
-//            transaction {
-//                input { dummyState }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this `fails with` "No inputs should be consumed when issuing an IOU."
-//            }
-//            transaction {
-//                output { iou }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                this.verifies() // As there are no input states.
-//            }
-//        }
-//    }
+    @Test
+    fun issueTransactionMustHaveNoInputs() {
+        val iou = IOUState(1.POUNDS, ALICE, BOB)
+        ledger {
+            transaction {
+                input { dummyState }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou }
+                this `fails with` "No inputs should be consumed when issuing an IOU."
+            }
+            transaction {
+                output { iou }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                this.verifies() // As there are no input states.
+            }
+        }
+    }
 
     /**
      * Task 3.
@@ -115,23 +115,23 @@ class IOUIssueTests {
      * Hint: Write an additional constraint within the existing [requireThat] block which you created in the previous
      * task.
      */
-//    @Test
-//    fun issueTransactionMustHaveOneOutput() {
-//        val iou = IOUState(1.POUNDS, ALICE, BOB)
-//        ledger {
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou } // Two outputs fails.
-//                output { iou }
-//                this `fails with` "Only one output state should be created when issuing an IOU."
-//            }
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou } // One output passes.
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun issueTransactionMustHaveOneOutput() {
+        val iou = IOUState(1.POUNDS, ALICE, BOB)
+        ledger {
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou } // Two outputs fails.
+                output { iou }
+                this `fails with` "Only one output state should be created when issuing an IOU."
+            }
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou } // One output passes.
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 4.
@@ -154,31 +154,31 @@ class IOUIssueTests {
      *   property by using [IOUState.amount.token].
      *
      */
-//    @Test
-//    fun cannotCreateZeroValueIOUs() {
-//        ledger {
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { IOUState(0.POUNDS, ALICE, BOB) } // Zero amount fails.
-//                this `fails with` "A newly issued IOU must have a positive amount."
-//            }
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { IOUState(100.SWISS_FRANCS, ALICE, BOB) }
-//                this.verifies()
-//            }
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { IOUState(1.POUNDS, ALICE, BOB) }
-//                this.verifies()
-//            }
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { IOUState(10.DOLLARS, ALICE, BOB) }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun cannotCreateZeroValueIOUs() {
+        ledger {
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { IOUState(0.POUNDS, ALICE, BOB) } // Zero amount fails.
+                this `fails with` "A newly issued IOU must have a positive amount."
+            }
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { IOUState(100.SWISS_FRANCS, ALICE, BOB) }
+                this.verifies()
+            }
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { IOUState(1.POUNDS, ALICE, BOB) }
+                this.verifies()
+            }
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { IOUState(10.DOLLARS, ALICE, BOB) }
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 5.

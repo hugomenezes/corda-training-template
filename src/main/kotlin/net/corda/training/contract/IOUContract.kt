@@ -12,9 +12,6 @@ import net.corda.training.state.IOUState
  * [IOUContractTests] for instructions on how to complete the [IOUContract] class.
  */
 class IOUContract : Contract {
-    /**
-     * Legal prose reference. This is just a dummy string for the time being.
-     */
     override val legalContractReference: SecureHash = SecureHash.sha256("Prose contract.")
 
     /**
@@ -23,9 +20,7 @@ class IOUContract : Contract {
      * function to check for a range of commands which implement this interface.
      */
     interface Commands : CommandData {
-        // Add commands here.
-        // E.g
-        // class DoSomething : TypeOnlyCommandData(), Commands
+        class Issue : TypeOnlyCommandData(), Commands
     }
 
     /**
@@ -33,9 +28,12 @@ class IOUContract : Contract {
      * The constraints are self documenting so don't require any additional explanation.
      */
     override fun verify(tx: TransactionForContract) {
-        // Add contract code here.
-        // requireThat {
-        //     ...
-        // }
+        val command = tx.commands.requireSingleCommand<Commands.Issue>()
+        val iou = tx.outputs.single() as IOUState
+        requireThat {
+            "No inputs should be consumed when issuing an IOU." using (tx.inputs.isEmpty())
+            "Only one output state should be created when issuing an IOU." using (tx.outputs.size == 1)
+            "A newly issued IOU must have a positive amount." using (iou.amount.quantity > 0)
+        }
     }
 }
