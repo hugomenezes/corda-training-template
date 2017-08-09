@@ -193,47 +193,47 @@ class IOUIssueTests {
      * - You will need a reference to the Issue command to get access to the list of signers.
      * - [requireSingleCommand] returns the single required command - you can assign the return value to a constant.
      */
-//    @Test
-//    fun lenderAndBorrowerMustSignIssueTransaction() {
-//        val iou = IOUState(1.POUNDS, ALICE, BOB)
-//        ledger {
-//            transaction {
-//                command(DUMMY_PUBKEY_1) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
-//            }
-//            transaction {
-//                command(ALICE_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
-//            }
-//            transaction {
-//                command(BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
-//            }
-//            transaction {
-//                command(BOB_PUBKEY, BOB_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
-//            }
-//            transaction {
-//                command(BOB_PUBKEY, BOB_PUBKEY, MINI_CORP_PUBKEY, ALICE_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
-//            }
-//            transaction {
-//                command(BOB_PUBKEY, BOB_PUBKEY, BOB_PUBKEY, ALICE_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this.verifies()
-//            }
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun lenderAndBorrowerMustSignIssueTransaction() {
+        val iou = IOUState(1.POUNDS, ALICE, BOB)
+        ledger {
+            transaction {
+                command(DUMMY_PUBKEY_1) { IOUContract.Commands.Issue() }
+                output { iou }
+                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
+            }
+            transaction {
+                command(ALICE_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou }
+                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
+            }
+            transaction {
+                command(BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou }
+                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
+            }
+            transaction {
+                command(BOB_PUBKEY, BOB_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou }
+                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
+            }
+            transaction {
+                command(BOB_PUBKEY, BOB_PUBKEY, MINI_CORP_PUBKEY, ALICE_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou }
+                this `fails with` "Both lender and borrower together only may sign IOU issue transaction."
+            }
+            transaction {
+                command(BOB_PUBKEY, BOB_PUBKEY, BOB_PUBKEY, ALICE_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou }
+                this.verifies()
+            }
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou }
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 6.
@@ -242,21 +242,21 @@ class IOUIssueTests {
      * Hint:
      * - You can use the [IOUState.lender] and [IOUState.borrower] properties.
      */
-//    @Test
-//    fun lenderAndBorrowerCannotBeTheSame() {
-//        val iou = IOUState(1.POUNDS, ALICE, BOB)
-//        val borrowerIsLenderIou = IOUState(10.POUNDS, ALICE, ALICE)
-//        ledger {
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { borrowerIsLenderIou }
-//                this `fails with` "The lender and borrower cannot be the same identity."
-//            }
-//            transaction {
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
-//                output { iou }
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun lenderAndBorrowerCannotBeTheSame() {
+        val iou = IOUState(1.POUNDS, ALICE, BOB)
+        val borrowerIsLenderIou = IOUState(10.POUNDS, ALICE, ALICE)
+        ledger {
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { borrowerIsLenderIou }
+                this `fails with` "The lender and borrower cannot be the same identity."
+            }
+            transaction {
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Issue() }
+                output { iou }
+                this.verifies()
+            }
+        }
+    }
 }

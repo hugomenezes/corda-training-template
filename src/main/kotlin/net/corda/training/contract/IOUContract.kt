@@ -21,6 +21,8 @@ class IOUContract : Contract {
      */
     interface Commands : CommandData {
         class Issue : TypeOnlyCommandData(), Commands
+        class Transfer : TypeOnlyCommandData(), Commands
+        class Settle : TypeOnlyCommandData(), Commands
     }
 
     /**
@@ -29,11 +31,15 @@ class IOUContract : Contract {
      */
     override fun verify(tx: TransactionForContract) {
         val command = tx.commands.requireSingleCommand<Commands.Issue>()
-        val iou = tx.outputs.single() as IOUState
         requireThat {
             "No inputs should be consumed when issuing an IOU." using (tx.inputs.isEmpty())
             "Only one output state should be created when issuing an IOU." using (tx.outputs.size == 1)
-            "A newly issued IOU must have a positive amount." using (iou.amount.quantity > 0)
+            val iouFromOutput = tx.outputs.single() as IOUState
+            "A newly issued IOU must have a positive amount." using (iouFromOutput.amount.quantity > 0)
+            val commandSigners = command.signers.toSet()
+            val iouSigners = iouFromOutput.participants.map {it.owningKey}.toSet()
+            "The lender and borrower cannot be the same identity." using ( iouFromOutput.lender != iouFromOutput.borrower)
+            "Both lender and borrower together only may sign IOU issue transaction." using ( commandSigners == iouSigners)
         }
     }
 }
