@@ -22,7 +22,7 @@ data class IOUState(
         val amount : Amount<Currency>,
         val lender : Party,
         val borrower : Party,
-        val paid : Amount<Currency>,
+        val paid: Amount<Currency> = Amount(0, amount.token),
         override val linearId: UniqueIdentifier = UniqueIdentifier()
 ): LinearState {
 
@@ -33,9 +33,15 @@ data class IOUState(
 
     override val participants: List<AbstractParty> get() = listOf(lender, borrower)
 
+    override fun toString(): String {
+        return "IOU($linearId): $borrower owes $lender $amount and has paid $paid so far."
+    }
+
     /**
      * A Contract code reference to the IOUContract. Make sure this is not part of the [IOUState] constructor.
      * **Don't change this definition!**
      */
     override val contract get() = IOUContract()
+
+    fun pay(amount: Amount<Currency>): IOUState = copy(paid = paid + amount)
 }
