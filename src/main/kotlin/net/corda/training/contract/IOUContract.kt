@@ -58,6 +58,7 @@ class IOUContract : Contract {
             is Commands.Settle -> requireThat {
 
             }
+            else -> throw IllegalArgumentException("Unknown command")
         }
     }
 }

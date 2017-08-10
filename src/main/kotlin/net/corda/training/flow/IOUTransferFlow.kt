@@ -35,6 +35,13 @@ class IOUTransferFlow(val linearId: UniqueIdentifier, val newLender: Party): Flo
         val stateAndRefs = serviceHub.vaultService.linearHeadsOfType<IOUState>()
         val stateAndRef:  StateAndRef<IOUState> = stateAndRefs[linearId] ?: throw IllegalArgumentException("could not find the IOU")
         val inputIOU = stateAndRef.state.data
+
+        if(inputIOU.lender == me) {
+            println("it´s ok")
+        } else {
+            throw IllegalArgumentException("flow only can be started by the lender")
+        }
+
         val outputIOU =  inputIOU.copy(lender = newLender)
         val  signers = listOf(inputIOU.borrower.owningKey, inputIOU.lender.owningKey, outputIOU.lender.owningKey)
         val transferCommand = Command(IOUContract.Commands.Transfer(), signers)
