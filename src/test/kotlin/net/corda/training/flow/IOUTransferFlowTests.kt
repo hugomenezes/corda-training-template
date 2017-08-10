@@ -69,26 +69,26 @@ class IOUTransferFlowTests {
      * - Verify and sign the transaction as you did with the [IOUIssueFlow].
      * - Return the partially signed transaction.
      */
-//    @Test
-//    fun flowReturnsCorrectlyFormedPartiallySignedTransaction() {
-//        val stx = issueIou(IOUState(10.POUNDS, a.info.legalIdentity, b.info.legalIdentity))
-//        val inputIou = stx.tx.outputs.single().data as IOUState
-//        val flow = IOUTransferFlow(inputIou.linearId, c.info.legalIdentity)
-//        val future = a.services.startFlow(flow).resultFuture
-//        net.runNetwork()
-//        val ptx = future.getOrThrow()
-//        // Check the transaction is well formed...
-//        // One output IOUState, one input state reference and a Transfer command with the right properties.
-//        assert(ptx.tx.inputs.size == 1)
-//        assert(ptx.tx.outputs.size == 1)
-//        assert(ptx.tx.inputs.single() == StateRef(stx.id, 0))
-//        println("Input state ref: ${ptx.tx.inputs.single()} == ${StateRef(stx.id, 0)}")
-//        val outputIou = ptx.tx.outputs.single().data as IOUState
-//        println("Output state: $outputIou")
-//        val command = ptx.tx.commands.single()
-//        assert(command.value == IOUContract.Commands.Transfer())
-//        ptx.verifySignatures(b.info.legalIdentity.owningKey, c.info.legalIdentity.owningKey, DUMMY_NOTARY.owningKey)
-//    }
+    @Test
+    fun flowReturnsCorrectlyFormedPartiallySignedTransaction() {
+        val stx = issueIou(IOUState(10.POUNDS, a.info.legalIdentity, b.info.legalIdentity))
+        val inputIou = stx.tx.outputs.single().data as IOUState
+        val flow = IOUTransferFlow(inputIou.linearId, c.info.legalIdentity)
+        val future = a.services.startFlow(flow).resultFuture
+        net.runNetwork()
+        val ptx = future.getOrThrow()
+        // Check the transaction is well formed...
+        // One output IOUState, one input state reference and a Transfer command with the right properties.
+        assert(ptx.tx.inputs.size == 1)
+        assert(ptx.tx.outputs.size == 1)
+        assert(ptx.tx.inputs.single() == StateRef(stx.id, 0))
+        println("Input state ref: ${ptx.tx.inputs.single()} == ${StateRef(stx.id, 0)}")
+        val outputIou = ptx.tx.outputs.single().data as IOUState
+        println("Output state: $outputIou")
+        val command = ptx.tx.commands.single()
+        assert(command.value == IOUContract.Commands.Transfer())
+        ptx.verifySignatures(b.info.legalIdentity.owningKey, c.info.legalIdentity.owningKey, DUMMY_NOTARY.owningKey)
+    }
 
     /**
      * Task 2.

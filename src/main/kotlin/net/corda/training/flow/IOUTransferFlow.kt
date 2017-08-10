@@ -8,12 +8,15 @@ import net.corda.core.flows.InitiatedBy
 import net.corda.core.flows.InitiatingFlow
 import net.corda.core.flows.StartableByRPC
 import net.corda.core.node.services.linearHeadsOfType
+import net.corda.core.node.services.queryBy
 import net.corda.core.transactions.SignedTransaction
+import net.corda.core.transactions.TransactionBuilder
 import net.corda.flows.CollectSignaturesFlow
 import net.corda.flows.FinalityFlow
 import net.corda.flows.SignTransactionFlow
 import net.corda.training.contract.IOUContract
 import net.corda.training.state.IOUState
+import java.security.PublicKey
 
 /**
  * This is the flow which handles transfers of existing IOUs on the ledger.
@@ -26,8 +29,24 @@ import net.corda.training.state.IOUState
 class IOUTransferFlow(val linearId: UniqueIdentifier, val newLender: Party): FlowLogic<SignedTransaction>() {
     @Suspendable
     override fun call(): SignedTransaction {
-        // Placeholder code to avoid type error when running the tests. Remove before starting the flow task!
-        return TransactionType.General.Builder(null).toSignedTransaction(false)
+        //1.setup
+        val me = serviceHub.myInfo.legalIdentity
+        //2. get the IOU we want to transfer
+        val stateAndRefs = serviceHub.vaultService.linearHeadsOfType<IOUState>()
+        val stateAndRef:  StateAndRef<IOUState> = stateAndRefs[linearId] ?: throw IllegalArgumentException("could not find the IOU")
+        val inputIOU = stateAndRef.state.data
+        val outputIOU =  inputIOU.copy(lender = newLender)
+        val  signers = listOf(inputIOU.borrower.owningKey, inputIOU.lender.owningKey, outputIOU.lender.owningKey)
+        val transferCommand = Command(IOUContract.Commands.Transfer(), signers)
+        val notary = stateAndRef.state.notary
+        val txBuilder = TransactionBuilder(notary = notary)
+        txBuilder.addInputState(stateAndRef)
+        txBuilder.addOutputState(outputIOU)
+        txBuilder.addCommand(transferCommand)
+        val signedTx = serviceHub.signInitialTransaction(txBuilder)
+        val fullySignedTx = subFlow(CollectSignaturesFlow(signedTx))
+        val finalTx = subFlow(FinalityFlow(fullySignedTx)).single()
+        return finalTx
     }
 }
 
