@@ -1,20 +1,19 @@
 package net.corda.training.flow
 
-import net.corda.core.contracts.*
-import net.corda.core.crypto.CompositeKey
-import net.corda.training.state.IOUState
-import net.corda.training.contract.IOUContract
+import net.corda.core.contracts.Command
+import net.corda.core.contracts.POUNDS
+import net.corda.core.contracts.TransactionType
 import net.corda.core.flows.FlowLogic
 import net.corda.core.getOrThrow
-import net.corda.core.utilities.DUMMY_NOTARY
-import net.corda.testing.node.MockNetwork
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.WireTransaction
+import net.corda.core.utilities.DUMMY_NOTARY
+import net.corda.testing.node.MockNetwork
+import net.corda.training.contract.IOUContract
+import net.corda.training.state.IOUState
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 /**
  * Practical exercise instructions.
