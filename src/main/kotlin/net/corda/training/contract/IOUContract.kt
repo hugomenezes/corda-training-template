@@ -87,6 +87,7 @@ class IOUContract : Contract {
                 }
                 "Both lender and borrower together only must sign IOU settle transaction." using
                         (command.signers.toSet() == inputIou.participants.map { it.owningKey }.toSet())
+
             }
             else -> throw IllegalArgumentException("Unknown, command")
         }
