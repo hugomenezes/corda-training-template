@@ -55,6 +55,9 @@ class IOUContract : Contract {
                         (command.signers.toSet() == (input.participants.map { it.owningKey }.toSet() `union`
                                 output.participants.map { it.owningKey }.toSet()))
             }
+            is Commands.Settle -> requireThat {
+
+            }
         }
     }
 }

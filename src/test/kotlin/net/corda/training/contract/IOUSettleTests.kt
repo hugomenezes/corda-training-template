@@ -37,40 +37,40 @@ class IOUSettleTests {
      * TODO: Add the [IOUContract.Commands.Settle] case to the verify function.
      * Hint: You can leave the body empty for now.
      */
-//    @Test
-//    fun mustIncludeSettleCommand() {
-//        val iou = IOUState(10.POUNDS, ALICE, BOB)
-//        val inputCash = createCashState(5.POUNDS, BOB)
-//        val outputCash = inputCash.withNewOwner(newOwner = ALICE).second
-//        ledger {
-//            transaction {
-//                input { iou }
-//                output { iou.pay(5.POUNDS) }
-//                input { inputCash }
-//                output { outputCash }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                this.fails()
-//            }
-//            transaction {
-//                input { iou }
-//                output { iou.pay(5.POUNDS) }
-//                input { inputCash }
-//                output { outputCash }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { DummyCommand() } // Wrong type.
-//                this.fails()
-//            }
-//            transaction {
-//                input { iou }
-//                output { iou.pay(5.POUNDS) }
-//                input { inputCash }
-//                output { outputCash }
-//                command(BOB_PUBKEY) { Cash.Commands.Move() }
-//                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() } // Correct Type.
-//                this.verifies()
-//            }
-//        }
-//    }
+    @Test
+    fun mustIncludeSettleCommand() {
+        val iou = IOUState(10.POUNDS, ALICE, BOB)
+        val inputCash = createCashState(5.POUNDS, BOB)
+        val outputCash = inputCash.withNewOwner(newOwner = ALICE).second
+        ledger {
+            transaction {
+                input { iou }
+                output { iou.pay(5.POUNDS) }
+                input { inputCash }
+                output { outputCash }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                this.fails()
+            }
+            transaction {
+                input { iou }
+                output { iou.pay(5.POUNDS) }
+                input { inputCash }
+                output { outputCash }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { DummyCommand() } // Wrong type.
+                this.fails()
+            }
+            transaction {
+                input { iou }
+                output { iou.pay(5.POUNDS) }
+                input { inputCash }
+                output { outputCash }
+                command(BOB_PUBKEY) { Cash.Commands.Move() }
+                command(ALICE_PUBKEY, BOB_PUBKEY) { IOUContract.Commands.Settle() } // Correct Type.
+                this.verifies()
+            }
+        }
+    }
 
     /**
      * Task 2.
