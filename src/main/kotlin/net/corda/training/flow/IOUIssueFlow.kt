@@ -51,6 +51,7 @@ class IOUIssueFlowResponder(val otherParty: Party): FlowLogic<Unit>() {
                 val tx = stx.tx
                 val outputs = tx.outputs
                 val iou = outputs.single().data is IOUState
+                //pode fazer verificações de negocio aqui
             }
         }
 
