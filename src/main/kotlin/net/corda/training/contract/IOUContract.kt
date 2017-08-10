@@ -56,9 +56,39 @@ class IOUContract : Contract {
                                 output.participants.map { it.owningKey }.toSet()))
             }
             is Commands.Settle -> requireThat {
-
+                // Check there is only one group of IOUs and that there is always an input IOU.
+                val ious = tx.groupStates<IOUState, UniqueIdentifier> { it.linearId }.single()
+                requireThat { "There must be one input IOU." using (ious.inputs.size == 1) }
+                // Check there are output cash states.
+                val cash = tx.outputs.filterIsInstance<Cash.State>()
+                requireThat { "There must be output cash." using (cash.isNotEmpty()) }
+                // Check that the cash is being assigned to us.
+                val inputIou = ious.inputs.single()
+                val acceptableCash = cash.filter { it.owner == inputIou.lender }
+                requireThat { "There must be output cash paid to the recipient." using (acceptableCash.isNotEmpty()) }
+                // Sum the cash being sent to us (we don't care about the issuer).
+                val sumAcceptableCash = acceptableCash.sumCash().withoutIssuer()
+                val amountOutstanding = inputIou.amount - inputIou.paid
+                requireThat { "The amount settled cannot be more than the amount outstanding." using (amountOutstanding >= sumAcceptableCash) }
+                // Check to see if we need an output IOU or not.
+                if (amountOutstanding == sumAcceptableCash) {
+                    // If the IOU has been fully settled then there should be no IOU output state.
+                    requireThat { "There must be no output IOU as it has been fully settled." using (ious.outputs.isEmpty()) }
+                } else {
+                    // If the IOU has been partially settled then it should still exist.
+                    requireThat { "There must be one output IOU." using (ious.outputs.size == 1) }
+                    // Check only the paid property changes.
+                    val outputIou = ious.outputs.single()
+                    requireThat {
+                        "The amount may not change when settling." using (inputIou.amount == outputIou.amount)
+                        "The borrower may not change when settling." using (inputIou.borrower == outputIou.borrower)
+                        "The lender may not change when settling." using (inputIou.lender == outputIou.lender)
+                    }
+                }
+                "Both lender and borrower together only must sign IOU settle transaction." using
+                        (command.signers.toSet() == inputIou.participants.map { it.owningKey }.toSet())
             }
-            else -> throw IllegalArgumentException("Unknown command")
+            else -> throw IllegalArgumentException("Unknown, command")
         }
     }
 }
