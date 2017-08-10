@@ -62,25 +62,25 @@ class IOUIssueFlowTests {
      *   method.
      * - Return the [SignedTransaction].
      */
-//    @Test
-//    fun flowReturnsCorrectlyFormedPartiallySignedTransaction() {
-//        val iou = IOUState(10.POUNDS, a.info.legalIdentity, b.info.legalIdentity)
-//        val flow = IOUIssueFlow(iou, b.info.legalIdentity)
-//        val future = a.services.startFlow(flow).resultFuture
-//        net.runNetwork()
-//        // Return the unsigned(!) SignedTransaction object from the IOUIssueFlow.
-//        val ptx: SignedTransaction = future.getOrThrow()
-//        // Print the transaction for debugging purposes.
-//        println(ptx.tx)
-//        // Check the transaction is well formed...
-//        // No outputs, one input IOUState and a command with the right properties.
-//        assert(ptx.tx.inputs.isEmpty())
-//        assert(ptx.tx.outputs.single().data is IOUState)
-//        val command = ptx.tx.commands.single()
-//        assert(command.value == IOUContract.Commands.Issue())
-//        assert(command.signers.toSet() == iou.participants.map { it.owningKey }.toSet())
-//        ptx.verifySignatures(b.info.legalIdentity.owningKey, DUMMY_NOTARY.owningKey)
-//    }
+    @Test
+    fun flowReturnsCorrectlyFormedPartiallySignedTransaction() {
+        val iou = IOUState(10.POUNDS, a.info.legalIdentity, b.info.legalIdentity)
+        val flow = IOUIssueFlow(iou, b.info.legalIdentity)
+        val future = a.services.startFlow(flow).resultFuture
+        net.runNetwork()
+        // Return the unsigned(!) SignedTransaction object from the IOUIssueFlow.
+        val ptx: SignedTransaction = future.getOrThrow()
+        // Print the transaction for debugging purposes.
+        println(ptx.tx)
+        // Check the transaction is well formed...
+        // No outputs, one input IOUState and a command with the right properties.
+        assert(ptx.tx.inputs.isEmpty())
+        assert(ptx.tx.outputs.single().data is IOUState)
+        val command = ptx.tx.commands.single()
+        assert(command.value == IOUContract.Commands.Issue())
+        assert(command.signers.toSet() == iou.participants.map { it.owningKey }.toSet())
+        ptx.verifySignatures(b.info.legalIdentity.owningKey, DUMMY_NOTARY.owningKey)
+    }
 
     /**
      * Task 2.
