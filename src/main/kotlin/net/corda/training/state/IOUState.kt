@@ -1,13 +1,10 @@
 package net.corda.training.state
 
 import net.corda.core.contracts.Amount
-import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.LinearState
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.Party
-import net.corda.core.utilities.ALICE
-import net.corda.core.utilities.BOB
 import net.corda.training.contract.IOUContract
 import java.security.PublicKey
 import java.util.*
@@ -44,4 +41,6 @@ data class IOUState(
     override val contract get() = IOUContract()
 
     fun pay(amount: Amount<Currency>): IOUState = copy(paid = paid + amount)
+
+    fun withNewLender(newLender: Party): IOUState = copy(lender = newLender)
 }
